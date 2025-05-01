@@ -16,6 +16,8 @@
 
 	</head>
 	<body class="loading">
+	    <!-- Balões animados -->
+        <div id="baloes-container"></div>
 		<!-- Música de Fundo -->
         <audio src="assets/audio/MeuSol.mp3" controls autoplay loop></audio>
 		<div id="wrapper">
@@ -46,6 +48,222 @@
 			window.onload = function() { document.body.className = ''; }
 			window.ontouchmove = function() { return false; }
 			window.onorientationchange = function() { document.body.scrollTop = 0; }
+			// Balões animados de festa
+            function criarBalao() {
+                const container = document.getElementById('baloes-container');
+                const balao = document.createElement('div');
+                balao.className = 'balloon';
+                // Cores HSL variadas
+                const cores = [
+                    'hsl(215,50%,65%)',
+                    'hsl(245,40%,65%)',
+                    'hsl(139,50%,60%)',
+                    'hsl(59,50%,58%)',
+                    'hsl(23,55%,57%)'
+                ];
+                const idx = Math.floor(Math.random() * cores.length);
+                balao.style.background = cores[idx];
+                // Duração da animação
+                const duracoes = [4, 3.5, 3, 4.5, 5];
+                balao.style.animationDuration = duracoes[idx] + 's';
+                // Posição horizontal aleatória
+                balao.style.left = Math.random() * 90 + 'vw';
+                // Tamanho fixo igual ao exemplo
+                balao.style.width = '90px';
+                balao.style.height = '110px';
+                // Cordão como elemento filho
+                const cordao = document.createElement('div');
+                cordao.className = 'cordao';
+                cordao.style.height = '60px'; // valor original
+                balao.appendChild(cordao);
+                // Subida animada
+                balao.animate([
+                    { bottom: '-160px', opacity: 0.8 },
+                    { bottom: '110vh', opacity: 0.1 }
+                ], {
+                    duration: 9000 + Math.random()*2000,
+                    easing: 'linear',
+                    fill: 'forwards'
+                });
+                setTimeout(() => balao.remove(), 11000);
+                container.appendChild(balao);
+            }
+            setInterval(criarBalao, 900);
 		</script>
+		<style>
+            #baloes-container {
+                position: fixed;
+                left: 0; top: 0;
+                width: 100vw;
+                height: 100vh;
+                pointer-events: none;
+                z-index: 2;
+            }
+            .balao {
+                position: absolute;
+                bottom: -80px;
+                border-radius: 50% 50% 48% 52% / 60% 60% 40% 40%;
+                opacity: 0.85;
+                animation: subir-balao 6s linear forwards;
+                box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+                z-index: 2;
+                display: flex;
+                align-items: flex-end;
+                justify-content: center;
+            }
+            .brilho {
+                position: absolute;
+                top: 18%;
+                left: 22%;
+                width: 18%;
+                height: 22%;
+                background: rgba(255,255,255,0.45);
+                border-radius: 50%;
+                filter: blur(1px);
+                pointer-events: none;
+            }
+            .corda {
+                position: absolute;
+                bottom: -30px;
+                left: 50%;
+                width: 2px;
+                height: 30px;
+                background: linear-gradient(to bottom, #aaa 60%, #fff 100%);
+                border-radius: 1px;
+                transform: translateX(-50%);
+                z-index: 1;
+                opacity: 0.7;
+            }
+            @keyframes subir-balao {
+                0% { transform: translateY(0) scale(1); opacity: 0.85; }
+                10% { opacity: 1; }
+                100% { transform: translateY(-110vh) scale(1.1); opacity: 0.1; }
+            }
+            .balao.festa {
+                border-radius: 48% 52% 60% 40% / 60% 60% 40% 40%;
+                position: absolute;
+                bottom: -90px;
+                opacity: 0.92;
+                animation: subir-balao-festa linear forwards;
+                z-index: 2;
+                display: flex;
+                align-items: flex-end;
+                justify-content: center;
+                transition: filter 0.2s;
+                filter: drop-shadow(0 2px 8px #0002);
+            }
+            .balao.festa:hover {
+                filter: brightness(1.15) drop-shadow(0 4px 16px #0003);
+            }
+            @keyframes subir-balao-festa {
+                0% { transform: translateY(0) scale(1) rotate(var(--rot,0deg)); opacity: 0.92; }
+                10% { opacity: 1; }
+                100% { transform: translateY(-115vh) scale(1.08) rotate(var(--rot,0deg)); opacity: 0.08; }
+            }
+            .brilho.festa {
+                position: absolute;
+                top: 18%;
+                left: 22%;
+                width: 22%;
+                height: 28%;
+                background: linear-gradient(120deg, #fff8 60%, transparent 100%);
+                border-radius: 50%;
+                filter: blur(1.5px);
+                pointer-events: none;
+                opacity: 0.7;
+            }
+            .corda.festa {
+                position: absolute;
+                bottom: -38px;
+                left: 50%;
+                width: 2.5px;
+                height: 38px;
+                background: none;
+                z-index: 1;
+                opacity: 0.7;
+                transform: translateX(-50%);
+            }
+            .corda.festa::after {
+                content: '';
+                display: block;
+                width: 100%;
+                height: 100%;
+                border-left: 2px dashed #bbb;
+                animation: corda-onda 1.2s infinite linear;
+            }
+            @keyframes corda-onda {
+                0% { border-left: 2px dashed #bbb; }
+                50% { border-left: 2px dashed #888; }
+                100% { border-left: 2px dashed #bbb; }
+            }
+            .balao-face {
+                position: absolute;
+                top: 38%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                font-size: 1.2em;
+                pointer-events: none;
+                user-select: none;
+                text-shadow: 0 1px 4px #fff8, 0 0 2px #0002;
+            }
+            .balloon {
+                display: inline-block;
+                width: 90px;
+                height: 110px;
+                background: hsl(215,50%,65%);
+                border-radius: 80%;
+                position: absolute;
+                box-shadow: inset -10px -10px 0 rgba(0,0,0,0.07);
+                margin: 0;
+                transition: transform 0.5s ease;
+                z-index: 10;
+                animation: balloons 4s ease-in-out infinite;
+                transform-origin: bottom center;
+                bottom: -160px;
+                /* Removido left: 0 e right: 0 para evitar desalinhamento */
+            }
+            .cordao {
+                position: absolute;
+                left: 50%;
+                top: 100%;
+                transform: translateX(-50%);
+                width: 2.5px;
+                height: 60px; /* valor original */
+                background: linear-gradient(to bottom, #e0e0e0 60%, #fff 100%);
+                opacity: 0.7;
+                z-index: 1;
+                /* Pequena sombra para destacar no fundo escuro */
+                box-shadow: 0 2px 6px #0005;
+                animation: cordao-movimento 2s infinite ease-in-out;
+            }
+            @keyframes cordao-movimento {
+                0%, 100% { transform: translateX(-50%) translateY(0); }
+                50% { transform: translateX(calc(-50% + var(--cordao-amplitude))) translateY(10px); }
+            }
+            @keyframes balloons {
+                0%,100%{ transform:translateY(0) rotate(-4deg); }
+                50%{ transform:translateY(-25px) rotate(4deg); }
+            }
+            .balloon:before {
+                content: "▲";
+                font-size: 18px;
+                color: #e0e0e0;
+                display: block;
+                text-align: center;
+                width: 100%;
+                position: absolute;
+                bottom: -12px;
+                z-index: -100;
+            }
+            /* Removido .balloon:after para não duplicar o cordão */
+            .balloon:nth-child(2){ background:hsl(245,40%,65%); animation-duration:3.5s; }
+            .balloon:nth-child(2):before { color:#e0e0e0;  }
+            .balloon:nth-child(3){ background:hsl(139,50%,60%); animation-duration:3s; }
+            .balloon:nth-child(3):before { color:#e0e0e0;  }
+            .balloon:nth-child(4){ background:hsl(59,50%,58%); animation-duration:4.5s; }
+            .balloon:nth-child(4):before { color:#e0e0e0;  }
+            .balloon:nth-child(5){ background:hsl(23,55%,57%); animation-duration:5s; }
+            .balloon:nth-child(5):before { color:#e0e0e0;  }
+        </style>
 	</body>
 </html>
